@@ -1,10 +1,13 @@
 package toml
 
+import "bytes"
+
 //
-// NOTE: This file provides a Marshal(), MarshalIndent(), Unmarshal()
-// funcs using the same implementation pattern os the json package.
-// this makes it easy to swap out toml and json without changing
-// allow of code.
+// NOTE: This file provides a Marshal(), MarshalIndent()
+// with the same function signature as the json package.
+// I did this to app toml to be a drop in replacement (or addition)
+// to where I currently support JSON configuration files.
+// rsdoiel@library.caltech.edu, 2019-08-01
 //
 
 // MarshalIndent provides the TOML equivalent programming interface
@@ -15,7 +18,7 @@ package toml
 // } else {
 //    fmt.Fprintf(os.Stdout, "%s", src)
 // }
-func MarshalIdent(v interface{}, prefix, indent string) ([]byte, error) {
+func MarshalIndent(v interface{}, prefix, indent string) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	encoder := NewEncoder(buf)
 	encoder.Indent = prefix + indent
@@ -35,18 +38,4 @@ func MarshalIdent(v interface{}, prefix, indent string) ([]byte, error) {
 // }
 func Marshal(v interface{}) ([]byte, error) {
 	return MarshalIndent(v, "", "")
-}
-
-// Unmarshal provides toml with the same programming interface
-// as the json package provides.
-//
-// obj := new(MyObject)
-// if err := toml.Marshal(src, &obj); err != nil {
-//     log.Fatal(err)
-// } else {
-//    .... do something with obj.
-// }
-func Unmarshal(src []byte, v interface{}) error {
-	_, err := Decoder(src, v)
-	return err
 }
